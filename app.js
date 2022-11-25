@@ -8,10 +8,10 @@ const jwt = require('jsonwebtoken')
 process.env.JWT_SECRET
 /* console.log(process.env.URL_STRING) */
 
-const url = mongoose.connect('mongodb://localhost/seguridad');
+const url = mongoose.connect('mongodb://localhost/TODO');
 
 
-const data_users = require('./module_Schema/module')
+const data_users = require('./module_Schema/User')
 //solicitamos la ubicacion de las variables dentro de dev
 require('dotenv').config()
 
@@ -23,15 +23,16 @@ const app = express();
 app.use(express.urlencoded({extended:false}));
 app.use(express.json());
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '../Frontend/public'),{extensions:['html']}));
+//app.use(express.static(path.join(__dirname, 'public')));
 //app.use(express.static(__dirname + '/public'))
 
 
 app.post('/registro',(req,res)=>{
     //traemos los input del body del html
-    const {username,password} = req.body;
+    const {email,password} = req.body;
     //traemos los datos del squema para usarlos
-    const dataUsers = new data_users({username,password})
+    const dataUsers = new data_users({email,password})
 
     dataUsers.save(err=>{
         if(err){
@@ -47,8 +48,8 @@ app.post('/registro',(req,res)=>{
 
 app.post('/',(req,res)=>{
     //traemos los input del body del html
-    const {username,password} = req.body;
-   const loginUser = data_users.findOne({username},(err,user)=>{
+    const {email,password} = req.body;
+   const loginUser = data_users.findOne({email},(err,user)=>{
         if(err){
             res.status(500).send('ERROR AL AUTENTICAR AL USUARIO')
         }else if(!user){
@@ -58,8 +59,9 @@ app.post('/',(req,res)=>{
                 if(err){
                     res.status(500).send('ERROR AL AUTENTICAR')
                 }else if(result){
-                    res.redirect('/auth')
+                    //res.redirect('/auth')
                     //res.sendFile((__dirname + '/next'))
+                    res.sendFile(path.join(__dirname, '/../', 'Frontend/public/NextOfLogin.html' ))
                     //res.status(200).send('USUARIO AUTENTIFICADO CORRECTAMENTE')
                 }else{
                     res.status(500).send('EL USUARIO Y/O CONTRAÑA INCORRECTA')   
@@ -72,11 +74,11 @@ app.post('/',(req,res)=>{
 })
 
 app.get('/auth',(req,res)=>{
-    const {username, password} = req.body;
+    const {email, password} = req.body;
 
-    //consultar db y validar que existen username y password
-    const user = {username: username};
-    //estamos incriptando los datos del user(username)
+    //consultar db y validar que existen email y password
+    const user = {email: email};
+    //estamos incriptando los datos del user(email)
     const accessToken = generateAccessToken(user)
 
     res.header('authorization', accessToken).json({
@@ -127,10 +129,11 @@ app.get('/',(req,res)=>{
 })
 
 app.get('/registro',(req,res)=>{
+    /* res.sendFile((__dirname+'/../Frontend/public/home.html' )) */
     res.sendFile(path.join(__dirname, '/../', 'Frontend/public/registro.html' ))
 })
 
-app.get('/next',validateToken,(req,res)=>{
+app.get('/next',/* validateToken, */(req,res)=>{
     //res.sendFile((__dirname+'/public/NextOfLogin.html' ))
     res.sendFile(path.join(__dirname, '/../', 'Frontend/public/NextOfLogin.html' ))
 })
