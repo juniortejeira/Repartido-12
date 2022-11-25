@@ -30,9 +30,9 @@ app.use(express.static(path.join(__dirname, '../Frontend/public'),{extensions:['
 
 app.post('/registro',(req,res)=>{
     //traemos los input del body del html
-    const {email,password} = req.body;
+    const {email,password,URL} = req.body;
     //traemos los datos del squema para usarlos
-    const dataUsers = new data_users({email,password})
+    const dataUsers = new data_users({email,password,URL})
 
     dataUsers.save(err=>{
         if(err){
