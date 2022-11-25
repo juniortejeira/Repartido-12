@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Mundo registro</h1>
+    <form action="/registro" method="POST">
+        <h2>Registrarse</h2>
+        <div class="section">
+            <div class="title">Username</div>
+            <div class="field"><input id="username" type="text" name="username" ></div>
+        </div>
+
+        <div class="section">
+            <div class="title">Pasword</div>
+            <div class="field"><input id="password" type="text" name="password" ></div>
+        </div>
+
+        <div class="section">
+            <div class="button"><input type="submit" value="Registro de usuario"></div>
+            <div class="button"><a href="home.html">Login</div>
+        </div>
+    </form>
+    
+  
+  
+    <!--  <form action="registro" method="POST">
+        <input id="nombre_Input" type="text" name="usuario" >
+        <input id="contraña_Input" type="text" name="contraña">
+        <button sumit>Enviar Suscripcion</button>
+    </form>
+    
+    <button class="btn_register" id="btn_register" link="Registro.html">Registro</button> -->
+</body>
+
+<script>
+    document.querySelector("#btn_register").addEventListener("click",()=>{
+        location.href = '/registro'
+    })
+</script>    
+</html>
