@@ -37,10 +37,10 @@ app.post('/registro',(req,res)=>{
 
     dataUsers.save(err=>{
         if(err){
-            res.status(500).send('ERROR AL REGISTRAR AL USUSARIO')
+            res.status(500).json({'msg':'ERROR AL REGISTRAR AL USUSARIO'})
             console.log(err)
         }else{
-            res.status(200).send('USUARIO REGISTRADO')
+            res.status(200).json({'msg':'USUARIO REGISTRADO'})
         }
     })
 
@@ -53,20 +53,21 @@ app.post('/login',(req,res)=>{
     const {email,password} = req.body;
    const loginUser = data_users.findOne({email},(err,user)=>{
         if(err){
-            res.status(500).send('ERROR AL AUTENTICAR AL USUARIO')
+            res.status(500).json({'msg':'ERROR AL AUTENTICAR AL USUARIO'})
+
         }else if(!user){
-            res.status(500).send('EL USUARIO NO EXISTE') 
+            res.status(400).json({'msg':'EL USUARIO NO EXISTE'}) 
         }else{
             user.inCorrectpasswordCreada(password,(err,result)=>{
                 if(err){
-                    res.status(500).send('ERROR AL AUTENTICAR')
+                    res.status(500).json({"msg":"ERROR AL AUTENTICAR"})
                 }else if(result){
-                    res.redirect('/auth')
+                    //res.redirect('/auth')
                     //res.sendFile((__dirname + '/next'))
                     //res.sendFile(path.join(__dirname,'/../','/../', 'Pages/Login'));
-                    //res.status(200).send('USUARIO AUTENTIFICADO CORRECTAMENTE')
+                    res.status(200).json({"msg":"OK",id:user._id})
                 }else{
-                    res.status(500).send('EL USUARIO Y/O CONTRAÑA INCORRECTA')   
+                    res.status(500).json({"msg":'EL USUARIO Y/O CONTRAÑA INCORRECTA'})   
                 }
             })
         }
@@ -77,8 +78,9 @@ app.get('/auth',(req,res)=>{
     const {email, password} = req.body;
 
     //consultar db y validar que existen email y password
-    const user = {email: email};
     //estamos incriptando los datos del user(email)
+    const user = {email: email};
+    //traemos la funcion generateAccessToken que crea una firma al token y user es para sumarlo a esa firma encriptado
     const accessToken = generateAccessToken(user)
 
     res.header('authorization', accessToken).json({
@@ -95,9 +97,10 @@ function generateAccessToken(user){
 
 }
 
+
 function validateToken(req,res,next){
-    const accessToken = req.header['authorization'] || req.query.accessToken;
-    if(!accessToken) res.send('access denied');
+    const accessToken = req.headers['authorization'] /* || req.query.accessToken; */
+    if(!accessToken) res.status(403).json({msg:'access denied'});
 
     jwt.verify(accessToken, process.env.JWT_SECRET, (err, user)=>{
         if(err){
@@ -106,15 +109,11 @@ function validateToken(req,res,next){
             //req.user = user;
             //accessToken
             console.log(req.user + 'aqui validacion')
+            res.status(200).json({msg:'Exito'})
             next()
         }
     })
 }
 
-app.get('/prueba',async(req,res)=>{
-    const prueba = await data_users.find()
-    console.log(prueba);
-    res.json(prueba)
-})
 
   module.exports = app;

@@ -1,67 +1,104 @@
 import React from 'react';
-import { useState,useRef } from 'react'
+import { useState, useRef } from 'react'
 import { useEffect } from 'react'
+import './Login.css';
+import { useNavigate, Link } from "react-router-dom";
 
 function Login() {
+  const navigate = useNavigate();
+  const emailnameRef = useRef();
+  const passwordRef = useRef();
 
-const emailnameRef = useRef();
-const passwordRef = useRef();
+ /*  useEffect(() => {
+    async function encontrar() {
+      //estamos trayendo la base de datos de usuarios
+      const response = await fetch("http://localhost:5000");
+      //le decimos que la response sera un metodo json  
+      const data = response.json()
+      console.log(data)
+    };
+    encontrar().catch(console.log);
+  }, []) */
 
-useEffect(()=>{
-  async function encontrar(){
-    //estamos trayendo la base de datos de usuarios
-    const response = await fetch("http://localhost:5000");
-    //le decimos que la response sera un metodo json  
-    const data = response.json()
-    console.log(data)
-  };
-  encontrar().catch(console.log);
-},[])
-
-const onSubmit =(e)=>{
-  e.preventDefault();
-  const email = emailnameRef.current.value;
-  const password = passwordRef.current.value;
-  console.log({email,password})
-  fetch("http://localhost:5000/login",{
-    method:"POST",
-    headers:{"content-type":"application/json"},
-    //solicitamos email y password del ref
-    body: JSON.stringify({email, password})
-  })//".then" the an promize is the same that line 14
-  //.then(response => response.json())
-  .then(function(response){
-    return response.json()
-  }).then(function(data){
-    console.log(data)
-  })
-}
-
+  const onSubmit = (e) => {
+    e.preventDefault();
+    const email = emailnameRef.current.value;
+    const password = passwordRef.current.value;
+    //console.log({ email, password })
+    fetch("http://localhost:5000/login", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      //solicitamos email y password del ref
+      body: JSON.stringify({ email, password })
+    })//".then" the an promize is the same that line 14
+      //.then(response => response.json())
+      .then(function (response) {
+        //decodificar formato json
+        return response.json()
+      }).then(function (data) {
+        console.log("Data: ", data)
+        navigate("/Home");
+        //utilizamos la propiedad cookie
+        //document.cookie = data.token //esto da error ya que no estamos utilizando la cookie bien
+        document.cookie = `token=${data.token};path=/; samesite=strict`
+        console.log(document.cookie)
+      })
+  }
+    const probando = () => {
+      const token = document.cookie.replace('token=', '')
+      //console.log('probando  :  ' + token )
+      fetch("http://localhost:5000/pruebaDatos", {
+        method: "POST",
+        headers: { 'authorization': token }
+      }).then((res) => res.json()).then(data => {
+        console.log(data)
+      })
+    }
+   /* const redirection =  ()=>{
+    const correcto = document.header("OK");
+    fetch("http://localhost:5000/login", {
+      method:"POST",
+      headers:{"OK":correcto}
+    }).then(function (response) {
+      console.log("Bien hecho")
+      return response.json()
+    }).then(data =>{
+      console.log(data)
+    })
+  } */
 
 
   //render() 
-    return (
-      <>
-        <form onSubmit={onSubmit}>
-          <h2>Login</h2>
-          <div className="section">
-            <div className="title">email</div>
-            <div className="field"><input id="email" type="text" name="email" ref={emailnameRef}/></div>
-          </div>
+  return (
+    <>
 
-          <div className="section">
-            <div className="title">Pasword</div>
-            <div className="field"><input id="password" type="text" name="password" ref={passwordRef}/></div>
-          </div>
+      <div class="background">
+        <div class="shape"></div>
+        <div class="shape"></div>
+      </div>
 
-          <div className="section">
-            <div className="button"><input type="submit" value="Registro de usuario" /></div>
-            <div className="button"><a href="../Users/Users.js" />Login</div>
-          </div>
-        </form>
-      </>
-    )
-  }
+      <form className='Form-Login' onSubmit={onSubmit}>
+
+        <h3>Login</h3>
+
+        <label className='Label' for="username">Email</label>
+        <input className='Input' id='email' type='text' name='email' ref={emailnameRef} />
+
+        <label for="password">Contraseña</label>
+        <input className='Input' id='password' type='text' name='password' ref={passwordRef} />
+
+        <button className='BotonI'>Iniciar sesión</button>
+
+        <div className='Register'>  
+        <Link className='BotonR' to={'/Register'}>Registro</Link>
+        </div>
+
+
+      </form>
+
+    </>
+  )
+}
 
 export default Login;
 /* 

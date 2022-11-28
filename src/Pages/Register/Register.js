@@ -1,7 +1,8 @@
 import React from 'react';
-import { useState,useRef } from 'react'
-import { useEffect } from 'react'
+import { useState, useRef } from 'react';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import './Register.css';
 
 function Users() {
 
@@ -10,7 +11,7 @@ const emailnameRef = useRef();
 const passwordRef = useRef();
 const photoRef = useRef();
 
-useEffect(()=>{
+/* useEffect(()=>{
   async function encontrar(){
     //estamos trayendo la base de datos de usuarios
     const response = await fetch("http://localhost:5000");
@@ -19,7 +20,7 @@ useEffect(()=>{
     console.log(data)
   };
   encontrar().catch(console.log);
-},[])
+},[]) */
 
 const onSubmit =(e)=>{
   e.preventDefault();
@@ -39,43 +40,52 @@ const onSubmit =(e)=>{
     return response.json()
   }).then(function(data){
     console.log(data)
+    
   })
 }
 
 
 
   //render() 
-    return (
-      <>
-        <h1>Mundo registro</h1>
-    <form onSubmit={onSubmit}>
-        <h2>Registrarse</h2>
+  return (
+    <>
+
+      <div className='background-R'>
+        <div className='shape-R'></div>
+        <div className='shape-R'></div>
+      </div>
+
+      <form className='form-Register' onSubmit={onSubmit}>
+        <h3>Registrarse</h3>
         <div className="section">
-            <div className="title">username</div>
-            <div className="field"><input id="username" type="text" name="username" ref={usernameRef}/></div>
+        <label className='Label'>Nombre</label>
+          <div className="field"><input className='Input' id="username" type="text" name="username" ref={usernameRef} /></div>
         </div>
         <div className="section">
-            <div className="title">email</div>
-            <div className="field"><input id="email" type="text" name="email" ref={emailnameRef}/></div>
+        <label className='Label'>Email</label>
+          <div className="field"><input className='Input' id="email" type="email" name="email" ref={emailnameRef} /></div>
         </div>
 
         <div className="section">
-            <div className="title">Pasword</div>
-            <div className="field"><input id="password" type="text" name="password" ref={passwordRef}/></div>
+        <label className='Label'>Contraseña</label>
+          <div className="field"><input className='Input' id="password" type="password" name="password" ref={passwordRef} /></div>
         </div>
 
         <div className="section">
-            <div className="title">Photo</div>
-            <div className="field"><input id="photo" type="text" name="photo"ref={photoRef} /></div>
+        <label className='Label'>Foto</label>
+          <div className='File' id='Filed1'><input className='Input' id="photo" type="file" name="file-foto" ref={photoRef} /></div>
         </div>
 
         <div className="section">
-            <div className="button"><input type="submit" value="Registro de usuario"/></div>
-            <div className="button"><Link to={"../Users/Users"}/>Iniciar</div>
+          <input className='Boton-register' type="submit" value="Registro de usuario" />
+          <br></br>
+          <br></br>
+          <br></br>
+          <Link className='Boton-Iniciar' to={"../Users/Users"}>Iniciar</Link>
         </div>
-    </form>
-      </>
-    )
-  }
+      </form>
+    </>
+  )
+}
 
 export default Users;
