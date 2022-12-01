@@ -6,10 +6,9 @@ var path = require('path');
 const cors = require("cors");
 const jwt = require('jsonwebtoken')
 
+
 process.env.JWT_SECRET
 /* console.log(process.env.URL_STRING) */
-/* 
-const url = mongoose.connect('mongodb://localhost/TODO'); */
 
 
 const data_users = require('../models/User-schema')
@@ -26,8 +25,6 @@ app.use(express.urlencoded({extended:false}));
 app.use(express.json());
 
 app.use(express.static(path.join(__dirname,'/../','/../', 'Pages/Login')));
-//app.use(express.static(path.join(__dirname, 'public')));
-//app.use(express.static(__dirname + '/public'))
 
 app.post('/registro',(req,res)=>{
     //traemos los input del body del html
@@ -43,8 +40,7 @@ app.post('/registro',(req,res)=>{
             res.status(200).json({'msg':'USUARIO REGISTRADO'})
         }
     })
-
-  //   res.sendFile((__dirname+'/public/home.html' )) 
+ 
 }) 
 
 
@@ -62,10 +58,7 @@ app.post('/login',(req,res)=>{
                 if(err){
                     res.status(500).json({"msg":"ERROR AL AUTENTICAR"})
                 }else if(result){
-                    //res.redirect('/auth')
-                    //res.sendFile((__dirname + '/next'))
-                    //res.sendFile(path.join(__dirname,'/../','/../', 'Pages/Login'));
-                    res.status(200).json({"msg":"OK",id:user._id})
+                    res.status(200).json(user)
                 }else{
                     res.status(500).json({"msg":'EL USUARIO Y/O CONTRAÑA INCORRECTA'})   
                 }
@@ -73,6 +66,27 @@ app.post('/login',(req,res)=>{
         }
     })
 })
+
+app.post('/home',(req,res)=>{
+    //traemos los input del body del html
+    const {task,state,date,uid} = req.body;
+    //traemos los datos del squema para usarlos
+    const find  = data_users.findOneAndUpdate({_id: uid},{
+        $push:{tasks: {task,state,date}}
+    }).then(function (err) {
+        console.log("err: ", err)
+
+      })
+    console.log('aca esta el find ' + find)
+    res.status(200).json({'msg':'dato guardado'})
+}) 
+
+
+
+
+
+
+
 
 app.get('/auth',(req,res)=>{
     const {email, password} = req.body;
@@ -90,24 +104,19 @@ app.get('/auth',(req,res)=>{
 })
 
 function generateAccessToken(user){
-    //hacemos la firma del token
-    //user: informacion a encripar
-    //JWT_SECRET palabra secreta
-    return jwt.sign(user,process.env.JWT_SECRET/* ,{expiresIn: '5m'} */)
+    return jwt.sign(user,process.env.JWT_SECRET)
 
 }
 
 
 function validateToken(req,res,next){
-    const accessToken = req.headers['authorization'] /* || req.query.accessToken; */
+    const accessToken = req.headers['authorization']
     if(!accessToken) res.status(403).json({msg:'access denied'});
 
     jwt.verify(accessToken, process.env.JWT_SECRET, (err, user)=>{
         if(err){
             res.send('Access denied token incorrect')
         }else{
-            //req.user = user;
-            //accessToken
             console.log(req.user + 'aqui validacion')
             res.status(200).json({msg:'Exito'})
             next()

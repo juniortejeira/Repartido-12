@@ -2,10 +2,15 @@ const { Schema, model, default: mongoose } = require('mongoose');
 const bcrypt = require('bcrypt');
 
 const data_users = new Schema ({
-    username:{type:String || Number,require:true,unique:true},
-    email:{type:String || Number,require:true,unique:true},
-    password:{type:String || Number, require:true},
-    photo :{type:String || Number, require:true}
+    username:{type:String || Number},
+    email:{type:String || Number},
+    password:{type:String || Number},
+    photo :{type:String || Number},
+    tasks:{type:[{
+        task:String || Number,
+        state:String || Number,
+        date:String || Number
+    }],default:[]}
 },{versionKey: false});
 
 //pre=previo a que guarde, ejecutame este if 
@@ -47,4 +52,4 @@ data_users.methods.inCorrectpasswordCreada = function(candidatepassword, callbac
 
 
 
-module.exports = mongoose.model('usuario', data_users); 
+module.exports = mongoose.model('users', data_users); 
